@@ -7,7 +7,7 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '472' # ou a versão do .NET que você está usando
+    version: '4.7.2' # ou a versão do .NET que você está usando
 
 # Restaurar pacotes NuGet
 - task: DotNetCoreCLI@2
