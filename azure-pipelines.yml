@@ -1,0 +1,36 @@
+# Usar uma imagem padrão do Windows com o .NET SDK
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+# Instalar a versão correta do SDK do .NET
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '4.7.2' # ou a versão do .NET que você está usando
+
+# Restaurar pacotes NuGet
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj' # Caminho para o .csproj
+
+# Compilar o projeto
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj' # Caminho para o .csproj
+
+# Publicar o projeto
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: '**/*.csproj' # Caminho para o .csproj
+    arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+
+# Publicar os artefatos da build
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
