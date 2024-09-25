@@ -1,34 +1,24 @@
-# Usar uma imagem padrão do Windows com o .NET SDK
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-latest'  # Certifique-se de usar um agente Windows
 
 steps:
-# Instalar a versão correta do SDK do .NET
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '4.7.2' # ou a versão do .NET que você está usando
-
 # Restaurar pacotes NuGet
-- task: DotNetCoreCLI@2
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
   inputs:
     command: 'restore'
-    projects: '**/*.csproj' # Caminho para o .csproj
+    restoreSolution: '**/TestePortalIdsf.sln' # Caminho para o arquivo .sln
 
-# Compilar o projeto
-- task: DotNetCoreCLI@2
+# Compilar o projeto usando MSBuild
+- task: VSBuild@1
   inputs:
-    command: 'build'
-    projects: '**/*.csproj' # Caminho para o .csproj
+    solution: '**/*.sln'  # Altere para o caminho do seu .csproj se não houver um .sln
+    msbuildArgs: '/p:Configuration=Release'
+    platform: 'Any CPU'
+    configuration: 'Release'
 
-# Publicar o projeto
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: '**/*.csproj' # Caminho para o .csproj
-    arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
-
-# Publicar os artefatos da build
+# Publicar artefatos
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
